@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>崇实战队算法组 · 第一次作业</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #0d1117;
+    color: #e6edf3;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 32px 20px 64px; }
+  header { border-bottom: 1px solid #21262d; padding-bottom: 20px; margin-bottom: 24px; }
+  h1 { font-size: 22px; font-weight: 600; margin: 0 0 6px; letter-spacing: .2px; }
+  .sub { color: #8b949e; font-size: 14px; margin: 0; }
+  .meta { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    font-size: 12px; color: #8b949e; background: #161b22;
+    border: 1px solid #21262d; border-radius: 999px; padding: 3px 12px;
+  }
+  .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  .tab {
+    display: flex; flex-direction: column; gap: 2px; align-items: flex-start;
+    background: #161b22; border: 1px solid #21262d; border-radius: 10px;
+    padding: 10px 16px; cursor: pointer; color: #e6edf3;
+    font-family: inherit; font-size: 13px; transition: border-color .15s, background .15s;
+  }
+  .tab:hover { border-color: #30363d; }
+  .tab.active { border-color: #1f6feb; background: #161f2e; }
+  .tab-title { font-weight: 500; }
+  .tab-name { font-size: 11px; color: #6e7681; font-family: ui-monospace, Consolas, monospace; }
+  .file { display: none; }
+  .file.active { display: block; }
+  .file-head {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 16px; flex-wrap: wrap; margin-bottom: 10px;
+  }
+  .file-info { display: flex; flex-direction: column; gap: 2px; }
+  .file-title { font-size: 15px; font-weight: 600; }
+  .file-desc { font-size: 12px; color: #8b949e; }
+  .file-actions { display: flex; align-items: center; gap: 10px; }
+  .file-lines { font-size: 12px; color: #6e7681; }
+  .copy {
+    background: #21262d; border: 1px solid #30363d; color: #c9d1d9;
+    border-radius: 6px; padding: 4px 14px; font-size: 12px;
+    font-family: inherit; cursor: pointer; transition: background .15s;
+  }
+  .copy:hover { background: #30363d; }
+  pre.code {
+    counter-reset: ln;
+    background: #161b22; border: 1px solid #21262d; border-radius: 12px;
+    padding: 16px 0; margin: 0; overflow-x: auto;
+  }
+  pre.code code {
+    display: block;
+    font-family: ui-monospace, SFMono-Regular, Consolas, "Courier New", monospace;
+    font-size: 13px; line-height: 1.65; color: #e6edf3; white-space: pre;
+  }
+  .line { display: block; min-height: 1.65em; padding-right: 20px; }
+  .line::before {
+    counter-increment: ln;
+    content: counter(ln);
+    display: inline-block; width: 3.2em; padding-right: 1.2em;
+    text-align: right; color: #484f58; user-select: none;
+  }
+  .tok-kw { color: #ff7b72; }
+  .tok-str { color: #a5d6ff; }
+  .tok-num { color: #79c0ff; }
+  .tok-inc { color: #a5d6ff; }
+  footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #21262d;
+            color: #6e7681; font-size: 12px; }
+  @media (max-width: 640px) {
+    .wrap { padding: 20px 12px 48px; }
+    h1 { font-size: 18px; }
+    pre.code code { font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>崇实战队算法组 · 第一次作业</h1>
+    <p class="sub">编程部分 · 4 道 C++ 题目源码</p>
+    <div class="meta">
+      <span class="chip">C++17</span>
+      <span class="chip">MSVC 编译验证</span>
+      <span class="chip">4 个源文件</span>
+    </div>
+  </header>
+
+  <nav class="tabs">
+        <button class="tab active" data-target="file0"><span class="tab-title">数组反转</span><span class="tab-name">01_reverse_array.cpp</span></button>
+    <button class="tab" data-target="file1"><span class="tab-title">爬楼梯</span><span class="tab-name">02_climb_stairs.cpp</span></button>
+    <button class="tab" data-target="file2"><span class="tab-title">二叉树遍历</span><span class="tab-name">03_binary_tree_traversal.cpp</span></button>
+    <button class="tab" data-target="file3"><span class="tab-title">成绩统计与安全查询</span><span class="tab-name">04_score_system.cpp</span></button>
+  </nav>
+
+  <main>
+        <section class="file active" id="file0"><div class="file-head"><div class="file-info"><span class="file-title">数组反转</span><span class="file-desc">双指针原地反转 · 不新建数组</span></div><div class="file-actions"><span class="file-lines">37 行</span><button class="copy" type="button">复制</button></div></div><pre class="code"><code><span class="line">#include <span class="tok-inc">&lt;iostream&gt;</span></span>
+<span class="line"> </span>
+<span class="line"><span class="tok-kw">void</span> reverseArray(<span class="tok-kw">int</span>* arr, <span class="tok-kw">int</span> n) {</span>
+<span class="line">    <span class="tok-kw">if</span> (arr == <span class="tok-kw">nullptr</span> || n &lt;= <span class="tok-num">0</span>) {</span>
+<span class="line">        <span class="tok-kw">return</span>; </span>
+<span class="line">    }</span>
+<span class="line">    <span class="tok-kw">int</span>* left = arr;</span>
+<span class="line">    <span class="tok-kw">int</span>* right = arr + n - <span class="tok-num">1</span>;</span>
+<span class="line">    <span class="tok-kw">while</span> (left &lt; right) {</span>
+<span class="line">        <span class="tok-kw">int</span> temp = *left;</span>
+<span class="line">        *left = *right;</span>
+<span class="line">        *right = temp;</span>
+<span class="line">        left++;  </span>
+<span class="line">        right--; </span>
+<span class="line">    }</span>
+<span class="line">}</span>
+<span class="line"> </span>
+<span class="line"><span class="tok-kw">int</span> main() {</span>
+<span class="line">    <span class="tok-kw">int</span> n;</span>
+<span class="line">    <span class="tok-kw">if</span> (!(std::cin &gt;&gt; n)) {</span>
+<span class="line">        <span class="tok-kw">return</span> <span class="tok-num">0</span>;</span>
+<span class="line">    }</span>
+<span class="line">    <span class="tok-kw">if</span> (n &lt; <span class="tok-num">0</span> || n &gt; <span class="tok-num">100</span>) {</span>
+<span class="line">        <span class="tok-kw">return</span> <span class="tok-num">0</span>;</span>
+<span class="line">    }</span>
+<span class="line">    <span class="tok-kw">int</span> arr[<span class="tok-num">100</span>];</span>
+<span class="line">    <span class="tok-kw">for</span> (<span class="tok-kw">int</span> i = <span class="tok-num">0</span>; i &lt; n; i++) {</span>
+<span class="line">        std::cin &gt;&gt; arr[i];</span>
+<span class="line">    }</span>
+<span class="line">    reverseArray(arr, n);</span>
+<span class="line">    <span class="tok-kw">for</span> (<span class="tok-kw">int</span> i = <span class="tok-num">0</span>; i &lt; n; i++) {</span>
+<span class="line">        <span class="tok-kw">if</span> (i &gt; <span class="tok-num">0</span>) std::cout &lt;&lt; <span class="tok-str">" "</span>;</span>
+<span class="line">        std::cout &lt;&lt; arr[i];</span>
+<span class="line">    }</span>
+<span class="line">    std::cout &lt;&lt; std::endl;</span>
+<span class="line">    <span class="tok-kw">return</span> <span class="tok-num">0</span>;</span>
+<span class="line">}</span></code></pre></section>
+    <section class="file" id="file1"><div class="file-head"><div class="file-info"><span class="file-title">爬楼梯</span><span class="file-desc">迭代 + 递归 · 结果对比与耗时</span></div><div class="file-actions"><span class="file-lines">55 行</span><button class="copy" type="button">复制</button></div></div><pre class="code"><code><span class="line">#include <span class="tok-inc">&lt;iostream&gt;</span></span>
+<span class="line">#include <span class="tok-inc">&lt;chrono&gt;</span></span>
+<span class="line"> </span>
+<span class="line"><span class="tok-kw">long</span> <span class="tok-kw">long</span> climbStairsIter(<span class="tok-kw">int</span> n) {</span>
+<span class="line">    <span class="tok-kw">if</span> (n &lt; <span class="tok-num">0</span>) <span class="tok-kw">return</span> <span class="tok-num">0</span>;</span>
+<span class="line">    <span class="tok-kw">if</span> (n == <span class="tok-num">0</span> || n == <span class="tok-num">1</span>) <span class="tok-kw">return</span> <span class="tok-num">1</span>; </span>
+<span class="line">    <span class="tok-kw">long</span> <span class="tok-kw">long</span> a = <span class="tok-num">1</span>; </span>
+<span class="line">    <span class="tok-kw">long</span> <span class="tok-kw">long</span> b = <span class="tok-num">1</span>; </span>
+<span class="line">    <span class="tok-kw">long</span> <span class="tok-kw">long</span> c = <span class="tok-num">0</span>; </span>
+<span class="line">    <span class="tok-kw">for</span> (<span class="tok-kw">int</span> i = <span class="tok-num">2</span>; i &lt;= n; i++) {</span>
+<span class="line">        c = a + b;   </span>
+<span class="line">        a = b;       </span>
+<span class="line">        b = c;</span>
+<span class="line">    }</span>
+<span class="line">    <span class="tok-kw">return</span> c;</span>
+<span class="line">}</span>
+<span class="line"> </span>
+<span class="line"><span class="tok-kw">long</span> <span class="tok-kw">long</span> climbStairsRecur(<span class="tok-kw">int</span> n) {</span>
+<span class="line">    <span class="tok-kw">if</span> (n &lt; <span class="tok-num">0</span>) <span class="tok-kw">return</span> <span class="tok-num">0</span>;</span>
+<span class="line">    <span class="tok-kw">if</span> (n == <span class="tok-num">0</span> || n == <span class="tok-num">1</span>) <span class="tok-kw">return</span> <span class="tok-num">1</span>; </span>
+<span class="line">    <span class="tok-kw">return</span> climbStairsRecur(n - <span class="tok-num">1</span>) + climbStairsRecur(n - <span class="tok-num">2</span>);</span>
+<span class="line">}</span>
+<span class="line"> </span>
+<span class="line"><span class="tok-kw">int</span> main() {</span>
+<span class="line">    <span class="tok-kw">int</span> n;</span>
+<span class="line">    <span class="tok-kw">if</span> (!(std::cin &gt;&gt; n)) {</span>
+<span class="line">        <span class="tok-kw">return</span> <span class="tok-num">0</span>;</span>
+<span class="line">    }</span>
+<span class="line">    <span class="tok-kw">if</span> (n &lt; <span class="tok-num">0</span> || n &gt; <span class="tok-num">40</span>) {</span>
+<span class="line">        std::cout &lt;&lt; <span class="tok-str">"阶数不合法，请输入 0 到 40。"</span> &lt;&lt; std::endl;</span>
+<span class="line">        <span class="tok-kw">return</span> <span class="tok-num">0</span>;</span>
+<span class="line">    }</span>
+<span class="line">    auto startIter = std::chrono::high_resolution_clock::now();</span>
+<span class="line">    <span class="tok-kw">long</span> <span class="tok-kw">long</span> resIter = climbStairsIter(n);</span>
+<span class="line">    auto endIter = std::chrono::high_resolution_clock::now();</span>
+<span class="line">    std::chrono::duration&lt;<span class="tok-kw">double</span>, std::milli&gt; elapsedIter = endIter - startIter;</span>
+<span class="line">    auto startRecur = std::chrono::high_resolution_clock::now();</span>
+<span class="line">    <span class="tok-kw">long</span> <span class="tok-kw">long</span> resRecur = climbStairsRecur(n);</span>
+<span class="line">    auto endRecur = std::chrono::high_resolution_clock::now();</span>
+<span class="line">    std::chrono::duration&lt;<span class="tok-kw">double</span>, std::milli&gt; elapsedRecur = endRecur - startRecur;</span>
+<span class="line">    std::cout &lt;&lt; <span class="tok-str">"\n========== 运行结果 =========="</span> &lt;&lt; std::endl;</span>
+<span class="line">    std::cout &lt;&lt; <span class="tok-str">"迭代实现结果: "</span> &lt;&lt; resIter &lt;&lt; <span class="tok-str">" (耗时: "</span> &lt;&lt; elapsedIter.count() &lt;&lt; <span class="tok-str">" ms)"</span> &lt;&lt; std::endl;</span>
+<span class="line">    std::cout &lt;&lt; <span class="tok-str">"递归实现结果: "</span> &lt;&lt; resRecur &lt;&lt; <span class="tok-str">" (耗时: "</span> &lt;&lt; elapsedRecur.count() &lt;&lt; <span class="tok-str">" ms)"</span> &lt;&lt; std::endl;</span>
+<span class="line">    <span class="tok-kw">if</span> (resIter == resRecur) {</span>
+<span class="line">        std::cout &lt;&lt; <span class="tok-str">"对比结论: 两种方法计算结果完全一致！"</span> &lt;&lt; std::endl;</span>
+<span class="line">    } <span class="tok-kw">else</span> {</span>
+<span class="line">        std::cout &lt;&lt; <span class="tok-str">"对比结论: 结果不一致（程序可能存在 bug）！"</span> &lt;&lt; std::endl;</span>
+<span class="line">    }</span>
+<span class="line">    std::cout &lt;&lt; <span class="tok-str">"=============================="</span> &lt;&lt; std::endl;</span>
+<span class="line">    <span class="tok-kw">if</span> (n &gt;= <span class="tok-num">35</span>) {</span>
+<span class="line">        std::cout &lt;&lt; <span class="tok-str">"\n💡 提示: 当 n &gt;= 35 时，递归由于存在大量的重复计算，耗时会明显上升。"</span> &lt;&lt; std::endl;</span>
+<span class="line">        std::cout &lt;&lt; <span class="tok-str">"而迭代方法时间复杂度为 O(n)，无论 n 多大都是瞬间完成。"</span> &lt;&lt; std::endl;</span>
+<span class="line">    }</span>
+<span class="line">    <span class="tok-kw">return</span> <span class="tok-num">0</span>;</span>
+<span class="line">}</span></code></pre></section>
+    <section class="file" id="file2"><div class="file-head"><div class="file-info"><span class="file-title">二叉树遍历</span><span class="file-desc">前序 / 中序 / 后序</span></div><div class="file-actions"><span class="file-lines">57 行</span><button class="copy" type="button">复制</button></div></div><pre class="code"><code><span class="line">#include <span class="tok-inc">&lt;iostream&gt;</span></span>
+<span class="line"> </span>
+<span class="line"><span class="tok-kw">void</span> preorderTraversal(<span class="tok-kw">const</span> <span class="tok-kw">int</span>* tree, <span class="tok-kw">int</span> n, <span class="tok-kw">int</span> i) {</span>
+<span class="line">    <span class="tok-kw">if</span> (i &gt;= n || tree[i] == -<span class="tok-num">1</span>) {</span>
+<span class="line">        <span class="tok-kw">return</span>;</span>
+<span class="line">    }</span>
+<span class="line">    std::cout &lt;&lt; tree[i] &lt;&lt; <span class="tok-str">" "</span>;                 </span>
+<span class="line">    preorderTraversal(tree, n, <span class="tok-num">2</span> * i + <span class="tok-num">1</span>);       </span>
+<span class="line">    preorderTraversal(tree, n, <span class="tok-num">2</span> * i + <span class="tok-num">2</span>);       </span>
+<span class="line">}</span>
+<span class="line"> </span>
+<span class="line"><span class="tok-kw">void</span> inorderTraversal(<span class="tok-kw">const</span> <span class="tok-kw">int</span>* tree, <span class="tok-kw">int</span> n, <span class="tok-kw">int</span> i) {</span>
+<span class="line">    <span class="tok-kw">if</span> (i &gt;= n || tree[i] == -<span class="tok-num">1</span>) {</span>
+<span class="line">        <span class="tok-kw">return</span>;</span>
+<span class="line">    }</span>
+<span class="line">    inorderTraversal(tree, n, <span class="tok-num">2</span> * i + <span class="tok-num">1</span>);       </span>
+<span class="line">    std::cout &lt;&lt; tree[i] &lt;&lt; <span class="tok-str">" "</span>;                 </span>
+<span class="line">    inorderTraversal(tree, n, <span class="tok-num">2</span> * i + <span class="tok-num">2</span>);       </span>
+<span class="line">}</span>
+<span class="line"> </span>
+<span class="line"><span class="tok-kw">void</span> postorderTraversal(<span class="tok-kw">const</span> <span class="tok-kw">int</span>* tree, <span class="tok-kw">int</span> n, <span class="tok-kw">int</span> i) {</span>
+<span class="line">    <span class="tok-kw">if</span> (i &gt;= n || tree[i] == -<span class="tok-num">1</span>) {</span>
+<span class="line">        <span class="tok-kw">return</span>;</span>
+<span class="line">    }</span>
+<span class="line">    postorderTraversal(tree, n, <span class="tok-num">2</span> * i + <span class="tok-num">1</span>);      </span>
+<span class="line">    postorderTraversal(tree, n, <span class="tok-num">2</span> * i + <span class="tok-num">2</span>);      </span>
+<span class="line">    std::cout &lt;&lt; tree[i] &lt;&lt; <span class="tok-str">" "</span>;                 </span>
+<span class="line">}</span>
+<span class="line"> </span>
+<span class="line"><span class="tok-kw">void</span> buildTestTree(<span class="tok-kw">int</span>* tree, <span class="tok-kw">int</span> n) {</span>
+<span class="line">    <span class="tok-kw">for</span> (<span class="tok-kw">int</span> i = <span class="tok-num">0</span>; i &lt; n; i++) {</span>
+<span class="line">        tree[i] = -<span class="tok-num">1</span>;</span>
+<span class="line">    }</span>
+<span class="line">    <span class="tok-kw">if</span> (n &gt; <span class="tok-num">0</span>) tree[<span class="tok-num">0</span>] = <span class="tok-num">1</span>; </span>
+<span class="line">    <span class="tok-kw">if</span> (n &gt; <span class="tok-num">1</span>) tree[<span class="tok-num">1</span>] = <span class="tok-num">2</span>; </span>
+<span class="line">    <span class="tok-kw">if</span> (n &gt; <span class="tok-num">2</span>) tree[<span class="tok-num">2</span>] = <span class="tok-num">3</span>; </span>
+<span class="line">    <span class="tok-kw">if</span> (n &gt; <span class="tok-num">3</span>) tree[<span class="tok-num">3</span>] = <span class="tok-num">4</span>; </span>
+<span class="line">    <span class="tok-kw">if</span> (n &gt; <span class="tok-num">4</span>) tree[<span class="tok-num">4</span>] = <span class="tok-num">5</span>; </span>
+<span class="line">}</span>
+<span class="line"> </span>
+<span class="line"><span class="tok-kw">int</span> main() {</span>
+<span class="line">    <span class="tok-kw">const</span> <span class="tok-kw">int</span> TREE_SIZE = <span class="tok-num">7</span>;</span>
+<span class="line">    <span class="tok-kw">int</span> tree[TREE_SIZE];</span>
+<span class="line">    buildTestTree(tree, TREE_SIZE);</span>
+<span class="line">    std::cout &lt;&lt; <span class="tok-str">"========== 二叉树遍历结果 =========="</span> &lt;&lt; std::endl;</span>
+<span class="line">    std::cout &lt;&lt; <span class="tok-str">"1. 前序遍历 (根 -&gt; 左 -&gt; 右): "</span>;</span>
+<span class="line">    preorderTraversal(tree, TREE_SIZE, <span class="tok-num">0</span>);</span>
+<span class="line">    std::cout &lt;&lt; <span class="tok-str">"\n(期望结果: 1 2 4 5 3)\n"</span> &lt;&lt; std::endl;</span>
+<span class="line">    std::cout &lt;&lt; <span class="tok-str">"2. 中序遍历 (左 -&gt; 根 -&gt; 右): "</span>;</span>
+<span class="line">    inorderTraversal(tree, TREE_SIZE, <span class="tok-num">0</span>);</span>
+<span class="line">    std::cout &lt;&lt; <span class="tok-str">"\n(期望结果: 4 2 5 1 3)\n"</span> &lt;&lt; std::endl;</span>
+<span class="line">    std::cout &lt;&lt; <span class="tok-str">"3. 后序遍历 (左 -&gt; 右 -&gt; 根): "</span>;</span>
+<span class="line">    postorderTraversal(tree, TREE_SIZE, <span class="tok-num">0</span>);</span>
+<span class="line">    std::cout &lt;&lt; <span class="tok-str">"\n(期望结果: 4 5 2 3 1)\n"</span> &lt;&lt; std::endl;</span>
+<span class="line">    std::cout &lt;&lt; <span class="tok-str">"===================================="</span> &lt;&lt; std::endl;</span>
+<span class="line">    <span class="tok-kw">return</span> <span class="tok-num">0</span>;</span>
+<span class="line">}</span></code></pre></section>
+    <section class="file" id="file3"><div class="file-head"><div class="file-info"><span class="file-title">成绩统计与安全查询</span><span class="file-desc">7 个函数 · 边界安全</span></div><div class="file-actions"><span class="file-lines">157 行</span><button class="copy" type="button">复制</button></div></div><pre class="code"><code><span class="line">#include <span class="tok-inc">&lt;iostream&gt;</span></span>
+<span class="line"> </span>
+<span class="line"><span class="tok-kw">const</span> <span class="tok-kw">int</span> MAX_STUDENTS = <span class="tok-num">100</span>;</span>
+<span class="line"> </span>
+<span class="line"><span class="tok-kw">void</span> initScores(<span class="tok-kw">int</span>* scores, <span class="tok-kw">int</span> n) {</span>
+<span class="line">    <span class="tok-kw">for</span> (<span class="tok-kw">int</span> i = <span class="tok-num">0</span>; i &lt; n; i++) {</span>
+<span class="line">        scores[i] = -<span class="tok-num">1</span>;</span>
+<span class="line">    }</span>
+<span class="line">}</span>
+<span class="line"> </span>
+<span class="line"><span class="tok-kw">void</span> inputScores(<span class="tok-kw">int</span>* scores, <span class="tok-kw">int</span> n) {</span>
+<span class="line">    std::cout &lt;&lt; <span class="tok-str">"\n--- 开始录入成绩 ---"</span> &lt;&lt; std::endl;</span>
+<span class="line">    <span class="tok-kw">for</span> (<span class="tok-kw">int</span> i = <span class="tok-num">0</span>; i &lt; n; i++) {</span>
+<span class="line">        <span class="tok-kw">int</span> score;</span>
+<span class="line">        <span class="tok-kw">while</span> (<span class="tok-kw">true</span>) {</span>
+<span class="line">            std::cout &lt;&lt; <span class="tok-str">"请输入学生 "</span> &lt;&lt; i &lt;&lt; <span class="tok-str">" 的成绩 (0-100): "</span>;</span>
+<span class="line">            std::cin &gt;&gt; score;</span>
+<span class="line">            <span class="tok-kw">if</span> (score &gt;= <span class="tok-num">0</span> &amp;&amp; score &lt;= <span class="tok-num">100</span>) {</span>
+<span class="line">                scores[i] = score;</span>
+<span class="line">                <span class="tok-kw">break</span>;</span>
+<span class="line">            } <span class="tok-kw">else</span> {</span>
+<span class="line">                std::cout &lt;&lt; <span class="tok-str">"⚠️ 输入成绩不合法 (必须在 0 到 100 之间)，请重新录入！"</span> &lt;&lt; std::endl;</span>
+<span class="line">            }</span>
+<span class="line">        }</span>
+<span class="line">    }</span>
+<span class="line">    std::cout &lt;&lt; <span class="tok-str">"--- 成绩录入完成 ---\n"</span> &lt;&lt; std::endl;</span>
+<span class="line">}</span>
+<span class="line"> </span>
+<span class="line"><span class="tok-kw">double</span> calcAverage(<span class="tok-kw">const</span> <span class="tok-kw">int</span>* scores, <span class="tok-kw">int</span> n) {</span>
+<span class="line">    <span class="tok-kw">if</span> (n &lt;= <span class="tok-num">0</span>) <span class="tok-kw">return</span> <span class="tok-num">0</span>.<span class="tok-num">0</span>;</span>
+<span class="line">    <span class="tok-kw">double</span> sum = <span class="tok-num">0</span>.<span class="tok-num">0</span>;</span>
+<span class="line">    <span class="tok-kw">int</span> validCount = <span class="tok-num">0</span>;</span>
+<span class="line">    <span class="tok-kw">for</span> (<span class="tok-kw">int</span> i = <span class="tok-num">0</span>; i &lt; n; i++) {</span>
+<span class="line">        <span class="tok-kw">if</span> (scores[i] != -<span class="tok-num">1</span>) { </span>
+<span class="line">            sum += scores[i];</span>
+<span class="line">            validCount++;</span>
+<span class="line">        }</span>
+<span class="line">    }</span>
+<span class="line">    <span class="tok-kw">if</span> (validCount == <span class="tok-num">0</span>) <span class="tok-kw">return</span> <span class="tok-num">0</span>.<span class="tok-num">0</span>;</span>
+<span class="line">    <span class="tok-kw">return</span> sum / validCount;</span>
+<span class="line">}</span>
+<span class="line"> </span>
+<span class="line"><span class="tok-kw">int</span> safeGet(<span class="tok-kw">const</span> <span class="tok-kw">int</span>* scores, <span class="tok-kw">int</span> n, <span class="tok-kw">int</span> index) {</span>
+<span class="line">    <span class="tok-kw">if</span> (index &lt; <span class="tok-num">0</span> || index &gt;= n) {</span>
+<span class="line">        std::cout &lt;&lt; <span class="tok-str">"⚠️ 下标越界 (当前有效范围: 0 至 "</span> &lt;&lt; n - <span class="tok-num">1</span> &lt;&lt; <span class="tok-str">")"</span> &lt;&lt; std::endl;</span>
+<span class="line">        <span class="tok-kw">return</span> -<span class="tok-num">1</span>;</span>
+<span class="line">    }</span>
+<span class="line">    <span class="tok-kw">if</span> (scores[index] == -<span class="tok-num">1</span>) {</span>
+<span class="line">        std::cout &lt;&lt; <span class="tok-str">"⚠️ 下标 "</span> &lt;&lt; index &lt;&lt; <span class="tok-str">" 合法，但该位置的学生成绩未录入！"</span> &lt;&lt; std::endl;</span>
+<span class="line">        <span class="tok-kw">return</span> -<span class="tok-num">1</span>;</span>
+<span class="line">    }</span>
+<span class="line">    <span class="tok-kw">return</span> scores[index];</span>
+<span class="line">}</span>
+<span class="line"> </span>
+<span class="line"><span class="tok-kw">void</span> countGrades(<span class="tok-kw">const</span> <span class="tok-kw">int</span>* scores, <span class="tok-kw">int</span> n, <span class="tok-kw">int</span>* counts) {</span>
+<span class="line">    <span class="tok-kw">for</span> (<span class="tok-kw">int</span> i = <span class="tok-num">0</span>; i &lt; <span class="tok-num">5</span>; i++) {</span>
+<span class="line">        counts[i] = <span class="tok-num">0</span>;</span>
+<span class="line">    }</span>
+<span class="line">    <span class="tok-kw">for</span> (<span class="tok-kw">int</span> i = <span class="tok-num">0</span>; i &lt; n; i++) {</span>
+<span class="line">        <span class="tok-kw">int</span> s = scores[i];</span>
+<span class="line">        <span class="tok-kw">if</span> (s == -<span class="tok-num">1</span>) <span class="tok-kw">continue</span>; </span>
+<span class="line">        <span class="tok-kw">if</span> (s &gt;= <span class="tok-num">90</span> &amp;&amp; s &lt;= <span class="tok-num">100</span>) {</span>
+<span class="line">            counts[<span class="tok-num">0</span>]++;</span>
+<span class="line">        } <span class="tok-kw">else</span> <span class="tok-kw">if</span> (s &gt;= <span class="tok-num">80</span> &amp;&amp; s &lt; <span class="tok-num">90</span>) {</span>
+<span class="line">            counts[<span class="tok-num">1</span>]++;</span>
+<span class="line">        } <span class="tok-kw">else</span> <span class="tok-kw">if</span> (s &gt;= <span class="tok-num">70</span> &amp;&amp; s &lt; <span class="tok-num">80</span>) {</span>
+<span class="line">            counts[<span class="tok-num">2</span>]++;</span>
+<span class="line">        } <span class="tok-kw">else</span> <span class="tok-kw">if</span> (s &gt;= <span class="tok-num">60</span> &amp;&amp; s &lt; <span class="tok-num">70</span>) {</span>
+<span class="line">            counts[<span class="tok-num">3</span>]++;</span>
+<span class="line">        } <span class="tok-kw">else</span> <span class="tok-kw">if</span> (s &gt;= <span class="tok-num">0</span> &amp;&amp; s &lt; <span class="tok-num">60</span>) {</span>
+<span class="line">            counts[<span class="tok-num">4</span>]++;</span>
+<span class="line">        }</span>
+<span class="line">    }</span>
+<span class="line">}</span>
+<span class="line"> </span>
+<span class="line"><span class="tok-kw">void</span> findMinMax(<span class="tok-kw">const</span> <span class="tok-kw">int</span>* scores, <span class="tok-kw">int</span> n, <span class="tok-kw">int</span>* max, <span class="tok-kw">int</span>* min) {</span>
+<span class="line">    <span class="tok-kw">if</span> (n &lt;= <span class="tok-num">0</span>) {</span>
+<span class="line">        *max = -<span class="tok-num">1</span>;</span>
+<span class="line">        *min = -<span class="tok-num">1</span>;</span>
+<span class="line">        <span class="tok-kw">return</span>;</span>
+<span class="line">    }</span>
+<span class="line">    <span class="tok-kw">int</span> currentMax = -<span class="tok-num">1</span>;</span>
+<span class="line">    <span class="tok-kw">int</span> currentMin = <span class="tok-num">101</span>;</span>
+<span class="line">    <span class="tok-kw">int</span> validCount = <span class="tok-num">0</span>;</span>
+<span class="line">    <span class="tok-kw">for</span> (<span class="tok-kw">int</span> i = <span class="tok-num">0</span>; i &lt; n; i++) {</span>
+<span class="line">        <span class="tok-kw">if</span> (scores[i] != -<span class="tok-num">1</span>) {</span>
+<span class="line">            <span class="tok-kw">if</span> (scores[i] &gt; currentMax) {</span>
+<span class="line">                currentMax = scores[i];</span>
+<span class="line">            }</span>
+<span class="line">            <span class="tok-kw">if</span> (scores[i] &lt; currentMin) {</span>
+<span class="line">                currentMin = scores[i];</span>
+<span class="line">            }</span>
+<span class="line">            validCount++;</span>
+<span class="line">        }</span>
+<span class="line">    }</span>
+<span class="line">    <span class="tok-kw">if</span> (validCount == <span class="tok-num">0</span>) {</span>
+<span class="line">        *max = -<span class="tok-num">1</span>;</span>
+<span class="line">        *min = -<span class="tok-num">1</span>;</span>
+<span class="line">    } <span class="tok-kw">else</span> {</span>
+<span class="line">        *max = currentMax;</span>
+<span class="line">        *min = currentMin;</span>
+<span class="line">    }</span>
+<span class="line">}</span>
+<span class="line"> </span>
+<span class="line"><span class="tok-kw">void</span> printResults(<span class="tok-kw">const</span> <span class="tok-kw">int</span>* scores, <span class="tok-kw">int</span> n, <span class="tok-kw">double</span> avg, <span class="tok-kw">const</span> <span class="tok-kw">int</span>* counts, <span class="tok-kw">int</span> max, <span class="tok-kw">int</span> min) {</span>
+<span class="line">    std::cout &lt;&lt; <span class="tok-str">"\n========== 统计结果 =========="</span> &lt;&lt; std::endl;</span>
+<span class="line">    std::cout &lt;&lt; <span class="tok-str">"学生总人数: "</span> &lt;&lt; n &lt;&lt; <span class="tok-str">" 人"</span> &lt;&lt; std::endl;</span>
+<span class="line">    std::cout &lt;&lt; <span class="tok-str">"成绩列表: "</span>;</span>
+<span class="line">    <span class="tok-kw">for</span> (<span class="tok-kw">int</span> i = <span class="tok-num">0</span>; i &lt; n; i++) {</span>
+<span class="line">        <span class="tok-kw">if</span> (scores[i] == -<span class="tok-num">1</span>) {</span>
+<span class="line">            std::cout &lt;&lt; <span class="tok-str">"未录入 "</span>;</span>
+<span class="line">        } <span class="tok-kw">else</span> {</span>
+<span class="line">            std::cout &lt;&lt; scores[i] &lt;&lt; <span class="tok-str">" "</span>;</span>
+<span class="line">        }</span>
+<span class="line">    }</span>
+<span class="line">    std::cout &lt;&lt; std::endl;</span>
+<span class="line">    std::cout &lt;&lt; <span class="tok-str">"班级平均分: "</span> &lt;&lt; avg &lt;&lt; <span class="tok-str">" 分"</span> &lt;&lt; std::endl;</span>
+<span class="line">    std::cout &lt;&lt; <span class="tok-str">"最高分: "</span> &lt;&lt; (max == -<span class="tok-num">1</span> ? <span class="tok-num">0</span> : max) &lt;&lt; <span class="tok-str">" 分"</span> &lt;&lt; std::endl;</span>
+<span class="line">    std::cout &lt;&lt; <span class="tok-str">"最低分: "</span> &lt;&lt; (min == -<span class="tok-num">1</span> ? <span class="tok-num">100</span> : min) &lt;&lt; <span class="tok-str">" 分"</span> &lt;&lt; std::endl;</span>
+<span class="line">    std::cout &lt;&lt; <span class="tok-str">"分数段人数统计:"</span> &lt;&lt; std::endl;</span>
+<span class="line">    std::cout &lt;&lt; <span class="tok-str">"  [90 - 100 分 (优秀)]: "</span> &lt;&lt; counts[<span class="tok-num">0</span>] &lt;&lt; <span class="tok-str">" 人"</span> &lt;&lt; std::endl;</span>
+<span class="line">    std::cout &lt;&lt; <span class="tok-str">"  [80 - 89 分  (良好)]: "</span> &lt;&lt; counts[<span class="tok-num">1</span>] &lt;&lt; <span class="tok-str">" 人"</span> &lt;&lt; std::endl;</span>
+<span class="line">    std::cout &lt;&lt; <span class="tok-str">"  [70 - 79 分  (中等)]: "</span> &lt;&lt; counts[<span class="tok-num">2</span>] &lt;&lt; <span class="tok-str">" 人"</span> &lt;&lt; std::endl;</span>
+<span class="line">    std::cout &lt;&lt; <span class="tok-str">"  [60 - 69 分  (及格)]: "</span> &lt;&lt; counts[<span class="tok-num">3</span>] &lt;&lt; <span class="tok-str">" 人"</span> &lt;&lt; std::endl;</span>
+<span class="line">    std::cout &lt;&lt; <span class="tok-str">"  [0 - 59 分 (不及格)]: "</span> &lt;&lt; counts[<span class="tok-num">4</span>] &lt;&lt; <span class="tok-str">" 人"</span> &lt;&lt; std::endl;</span>
+<span class="line">    std::cout &lt;&lt; <span class="tok-str">"=============================="</span> &lt;&lt; std::endl;</span>
+<span class="line">}</span>
+<span class="line"> </span>
+<span class="line"><span class="tok-kw">int</span> main() {</span>
+<span class="line">    <span class="tok-kw">int</span> scores[MAX_STUDENTS];</span>
+<span class="line">    <span class="tok-kw">int</span> n;</span>
+<span class="line">    <span class="tok-kw">int</span> counts[<span class="tok-num">5</span>] = {<span class="tok-num">0</span>};</span>
+<span class="line">    <span class="tok-kw">int</span> max = -<span class="tok-num">1</span>, min = -<span class="tok-num">1</span>;</span>
+<span class="line">    <span class="tok-kw">double</span> avg = <span class="tok-num">0</span>.<span class="tok-num">0</span>;</span>
+<span class="line">    <span class="tok-kw">int</span> testIndex;</span>
+<span class="line">    initScores(scores, MAX_STUDENTS);</span>
+<span class="line">    std::cout &lt;&lt; <span class="tok-str">"请输入学生人数 (1-"</span> &lt;&lt; MAX_STUDENTS &lt;&lt; <span class="tok-str">"): "</span>;</span>
+<span class="line">    std::cin &gt;&gt; n;</span>
+<span class="line">    <span class="tok-kw">if</span> (n &lt;= <span class="tok-num">0</span> || n &gt; MAX_STUDENTS) {</span>
+<span class="line">        std::cout &lt;&lt; <span class="tok-str">"输入人数不合法！"</span> &lt;&lt; std::endl;</span>
+<span class="line">        <span class="tok-kw">return</span> <span class="tok-num">0</span>;</span>
+<span class="line">    }</span>
+<span class="line">    inputScores(scores, n);</span>
+<span class="line">    avg = calcAverage(scores, n);</span>
+<span class="line">    findMinMax(scores, n, &amp;max, &amp;min);</span>
+<span class="line">    countGrades(scores, n, counts);</span>
+<span class="line">    std::cout &lt;&lt; <span class="tok-str">"请输入要查询的下标："</span>;</span>
+<span class="line">    std::cin &gt;&gt; testIndex;</span>
+<span class="line">    <span class="tok-kw">int</span> queried = safeGet(scores, n, testIndex);</span>
+<span class="line">    <span class="tok-kw">if</span> (queried == -<span class="tok-num">1</span>) {</span>
+<span class="line">        std::cout &lt;&lt; <span class="tok-str">"查询失败"</span> &lt;&lt; std::endl;</span>
+<span class="line">    } <span class="tok-kw">else</span> {</span>
+<span class="line">        std::cout &lt;&lt; <span class="tok-str">"下标 "</span> &lt;&lt; testIndex &lt;&lt; <span class="tok-str">" 的成绩是："</span> &lt;&lt; queried &lt;&lt; std::endl;</span>
+<span class="line">    }</span>
+<span class="line">    printResults(scores, n, avg, counts, max, min);</span>
+<span class="line">    <span class="tok-kw">return</span> <span class="tok-num">0</span>;</span>
+<span class="line">}</span></code></pre></section>
+  </main>
+
+  <footer>崇实战队 27 赛季算法组 · 第一次作业</footer>
+</div>
+
+<script>
+  var tabs = document.querySelectorAll('.tab');
+  var files = document.querySelectorAll('.file');
+
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      tabs.forEach(function (t) { t.classList.remove('active'); });
+      files.forEach(function (f) { f.classList.remove('active'); });
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.target).classList.add('active');
+    });
+  });
+
+  document.querySelectorAll('.copy').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var code = btn.closest('.file').querySelector('code').textContent;
+      var done = function () {
+        var old = btn.textContent;
+        btn.textContent = '已复制';
+        setTimeout(function () { btn.textContent = old; }, 1500);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(code).then(done, done);
+      } else {
+        var ta = document.createElement('textarea');
+        ta.value = code;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        done();
+      }
+    });
+  });
+</script>
+</body>
+</html>
